@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "merge_sort.h"
+#include "quick_sort.h"
 
 
 void dump_array(const char *comment, int a[], int len)
@@ -12,6 +13,7 @@ void dump_array(const char *comment, int a[], int len)
 
 void test_merge_sort()
 {
+    printf("merge sort...\n");
     {
         int a[] = { 3, 9, 1, 7, 5 };
         int len = sizeof(a)/ sizeof(a[0]);
@@ -38,8 +40,38 @@ void test_merge_sort()
     
 }
 
+void test_quick_sort()
+{
+    printf("quick sort...\n");
+    {
+        int a[] = { 4, 8, 2, 7, 5 };
+        int len = sizeof(a)/ sizeof(a[0]);
+        dump_array("before", a, len);
+        quick_sort(a, len);
+        dump_array(" after", a, len);
+    }
+
+    {
+        int a[] = { 6, 2 };
+        int len = sizeof(a)/ sizeof(a[0]);
+        dump_array("before", a, len);
+        quick_sort(a, len);
+        dump_array(" after", a, len);
+    }
+
+    {
+        int a[] = { 8, 2, 5 };
+        int len = sizeof(a)/ sizeof(a[0]);
+        dump_array("before", a, len);
+        quick_sort(a, len);
+        dump_array(" after", a, len);
+    }
+    
+}
+
 int main(int argc, char *argv[])
 {
     test_merge_sort();
+    test_quick_sort();
     return 0;
 }

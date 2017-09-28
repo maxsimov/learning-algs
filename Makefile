@@ -1,6 +1,6 @@
 .PHONY: all clean
 
-SOURCES=deque.c merge_sort.c
+SOURCES=deque.c merge_sort.c quick_sort.c
 APPS=test_deque test_sort
 
 CC=gcc
