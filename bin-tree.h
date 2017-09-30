@@ -1,32 +1,29 @@
 #pragma once
 
-
 struct bin_tree
 {
     int key;
+    void *data;
 
     struct bin_tree *left;
     struct bin_tree *right;
 };
 
-struct bin_tree *bin_tree_create(int root_key);
+struct bin_tree *bin_tree_create(int root_key, void *data);
 void bin_tree_destroy(struct bin_tree *tree);
 
-void bin_tree_add(struct bin_tree *tree, int value);
+typedef void (*bin_tree_bfs_callback)(void *context, struct bin_tree *tree, 
+                                      int level);
 
-// searches and lookups 
+void bin_tree_BFS(struct bin_tree *tree, bin_tree_bfs_callback visit, 
+                  void *context);
 
-enum bin_tree_visit_type 
-{ 
-    bin_tree_new_level,
-    bin_tree_current_level, 
-    bin_tree_end_level, 
-    bin_tree_end_tree 
-};
 
-typedef void (*bin_tree_callback)(struct bin_tree *tree, void *context, 
-                                  enum bin_tree_visit_type visit, int level);
+typedef void (*bin_tree_dfs_callback)(void *context, struct bin_tree *tree);
 
-void bin_tree_breadth_first(struct bin_tree *tree, bin_tree_callback func, 
-                            void *context);
-
+void bin_tree_DFS_preorder(struct bin_tree *tree, bin_tree_dfs_callback visit, 
+                           void *context);
+void bin_tree_DFS_inorder(struct bin_tree *tree, bin_tree_dfs_callback visit, 
+                           void *context);
+void bin_tree_DFS_postorder(struct bin_tree *tree, bin_tree_dfs_callback visit, 
+                           void *context);

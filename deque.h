@@ -26,6 +26,7 @@ bool deque_pop_front_int(struct deque *q, int *value);
 
 void deque_push_back_ptr(struct deque *q, void *data);
 bool deque_pop_front_ptr(struct deque *q, void **data);
+bool deque_peek_front_ptr(struct deque *q, void **data);
 
 // stack support
 void deque_push_front_int(struct deque *q, int value);

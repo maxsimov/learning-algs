@@ -3,8 +3,11 @@
 SOURCES=deque.c \
 		merge_sort.c \
 		quick_sort.c \
-		insertion_sort.c
-APPS=test_deque test_sort
+		insertion_sort.c \
+		bin-tree.c
+APPS=test_deque \
+	 test_sort \
+	 test_bin_tree
 
 CC=gcc
 CFLAGS=-Wall -std=c99

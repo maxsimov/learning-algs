@@ -97,6 +97,15 @@ union deque_item *_deque_pop_front(struct deque *q)
 }
 
 static
+union deque_item *_deque_peek_front(struct deque *q)
+{
+    if (q->head == q->tail)
+        return 0;
+    
+    return &q->items[q->head];
+}
+
+static
 union deque_item *_deque_pop_back(struct deque *q)
 {
     if (q->head == q->tail)
@@ -191,6 +200,18 @@ bool deque_pop_front_ptr(struct deque *q, void **data)
     
     _deque_rebalance(q);
     
+    return true;
+}
+
+bool deque_peek_front_ptr(struct deque *q, void **data)
+{
+    union deque_item *item = _deque_peek_front(q);
+    
+    if (!item)
+        return false;
+        
+    *data = item->data;
+
     return true;
 }
 
