@@ -2,7 +2,7 @@
 #include "bin-tree.h"
 
 void test_basic_bfs_traversal_1_visit(void *context, struct bin_tree *tree, 
-                                      int level)
+                                      int level, int breadth_index)
 {
     printf(" %d", tree->key);
 }
@@ -39,13 +39,33 @@ void test_basic_traversal_1()
     bin_tree_DFS_postorder(tree, test_basic_dfs_traversal_1_visit, 0);
     printf("\n");
     
+    printf(" Tree Height: %d\n", bin_tree_height(tree));
+    bin_tree_display(tree);
+    
     bin_tree_destroy(tree);
     
 }
 
+void test_display_1()
+{
+    struct bin_tree *tree;
+    
+    tree = bin_tree_create(5, 0);
+    tree->left = bin_tree_create(2, 0);
+        tree->left->right = bin_tree_create(1, 0);
+    tree->right = bin_tree_create(6, 0);
+        tree->right->right = bin_tree_create(7, 0);
+
+    printf(" Tree Height: %d\n", bin_tree_height(tree));
+    bin_tree_display(tree);
+    
+    bin_tree_destroy(tree);
+    
+}
 void test_bfs()
 {
     test_basic_traversal_1();
+    test_display_1();
 }
 
 int main(int argc, char *argv[])

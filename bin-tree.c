@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "deque.h"
 #include "bin-tree.h"
 
@@ -24,12 +25,94 @@ void bin_tree_destroy(struct bin_tree *tree)
     bin_tree_DFS_postorder(tree, &bin_tree_destroy_node, 0);    
 }
 
-void bin_tree_display(struct bin_tree *tree)
+static
+void calc_height(void *context, struct bin_tree *tree, int level, int breadth_index)
 {
+    int *max_level = (int *)context;
     
+    if (level > *max_level)
+        *max_level = level;
 }
 
-void bin_tree_BFS(struct bin_tree *tree, bin_tree_bfs_callback visit, void *context)
+int bin_tree_height(struct bin_tree *tree)
+{
+    int height = 0;
+    
+    bin_tree_BFS(tree, calc_height, &height);
+    
+    return height;
+}
+
+struct bin_tree_display_context
+{
+    char buf[128];
+    char *sbeg;
+    char *send;
+};
+
+void bin_tree_display_increase(struct bin_tree_display_context *ctx, char c)
+{
+    int maxlen = ctx->send - ctx->sbeg;
+    
+    if (maxlen < 4)
+        return;
+        
+    ctx->sbeg[0] = c;
+    ctx->sbeg[1] = ' ';
+    ctx->sbeg[2] = ' ';
+    ctx->sbeg[3] = 0;
+    
+    ctx->sbeg += 3;
+}
+
+void bin_tree_display_descrease(struct bin_tree_display_context *ctx)
+{
+    int maxdec = ctx->sbeg - ctx->buf;
+    
+    if (maxdec > 3)
+        maxdec = 3;
+        
+    ctx->sbeg -= 3;
+    ctx->sbeg[0] = 0;
+}
+
+void _bin_tree_display(struct bin_tree *tree, 
+                       struct bin_tree_display_context *ctx)
+{
+    printf("%d\n", tree->key);
+    
+    if (tree->left)
+    {
+        printf("%sL--", ctx->buf);
+        bin_tree_display_increase(ctx, tree->right ? '|' : ' ');
+        _bin_tree_display(tree->left, ctx);
+        bin_tree_display_descrease(ctx);
+    }
+    if (tree->right)
+    {
+        printf( "%sR--", ctx->buf);
+        bin_tree_display_increase(ctx, ' ');
+        _bin_tree_display(tree->right, ctx);
+        bin_tree_display_descrease(ctx);
+    }
+}
+
+void bin_tree_display(struct bin_tree *tree)
+{
+    struct bin_tree_display_context ctx;
+
+    ctx.sbeg = ctx.buf;
+    ctx.send = &ctx.buf[sizeof(ctx.buf)/sizeof(ctx.buf[0])-1];
+    
+    *ctx.sbeg = 0;
+    *ctx.send = 0;
+    
+    _bin_tree_display(tree, &ctx);
+}
+
+static
+void _bin_tree_BFS(struct bin_tree *tree, bin_tree_bfs_callback visit, 
+                   void *context, int full)
 {
     struct deque queue;
     
@@ -39,6 +122,7 @@ void bin_tree_BFS(struct bin_tree *tree, bin_tree_bfs_callback visit, void *cont
     int level = 0;
     int remaining_nodes = 1;
     int remaining_nodes_next = 0;
+    int breadth_index = 0;
     
     deque_init(&queue);
     deque_push_back_ptr(&queue, tree);
@@ -47,29 +131,43 @@ void bin_tree_BFS(struct bin_tree *tree, bin_tree_bfs_callback visit, void *cont
     
     while (deque_pop_front_ptr(&queue, (void **)&e))
     {
-        if (e->left) 
+        if (e)
         {
             ++remaining_nodes_next;
             deque_push_back_ptr(&queue, e->left);
-        }
-        if (e->right) 
-        {
+            
             ++remaining_nodes_next;
             deque_push_back_ptr(&queue, e->right);
         }
         
-        visit(context, e, level);
+        if (e || full)
+            visit(context, e, level, breadth_index);
+            
+        breadth_index++;
         
         if (--remaining_nodes == 0)
         {
             remaining_nodes = remaining_nodes_next;
             remaining_nodes_next = 0;
+            breadth_index = 0;
             ++level;
         }
     }
     
     deque_cleanup(&queue);
 }
+
+void bin_tree_BFS(struct bin_tree *tree, bin_tree_bfs_callback visit, void *context)
+{
+    _bin_tree_BFS(tree, visit, context, 0);
+}
+
+void bin_tree_BFS_full(struct bin_tree *tree, bin_tree_bfs_callback visit, 
+                       void *context)
+{
+    _bin_tree_BFS(tree, visit, context, 1);
+}
+
 
 void bin_tree_DFS_preorder(struct bin_tree *tree, bin_tree_dfs_callback visit, 
                            void *context)
