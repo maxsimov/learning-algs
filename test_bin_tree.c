@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "bin-tree.h"
 
 void test_basic_bfs_traversal_1_visit(void *context, struct bin_tree *tree, 
@@ -62,10 +63,23 @@ void test_display_1()
     bin_tree_destroy(tree);
     
 }
+
+void test_random_tree_1()
+{
+    struct bin_tree *tree = bin_tree_random(0x38FADE61, 100, 99);
+
+    printf("Generate random tree ...\n");
+    printf(" Tree Height: %d\n", bin_tree_height(tree));
+    bin_tree_display(tree);
+    
+    bin_tree_destroy(tree);
+}
+
 void test_bfs()
 {
     test_basic_traversal_1();
     test_display_1();
+    test_random_tree_1();    
 }
 
 int main(int argc, char *argv[])

@@ -12,7 +12,7 @@ APPS=test_deque \
 	 test_hash
 
 CC=gcc
-CFLAGS=-Wall -std=c99
+CFLAGS=-Wall -std=c99 -D_XOPEN_SOURCE_EXTENDED -D_XOPEN_SOURCE=500
 LDFLAGS=
 OBJDIR=obj
 OBJECTS=$(patsubst %.c, $(OBJDIR)/%.o, $(SOURCES))

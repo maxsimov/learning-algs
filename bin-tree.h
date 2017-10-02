@@ -13,6 +13,8 @@ struct bin_tree *bin_tree_create(int root_key, void *data);
 void bin_tree_destroy(struct bin_tree *tree);
 void bin_tree_display(struct bin_tree *tree);
 
+struct bin_tree *bin_tree_random(unsigned seed, int nodes, int maxvalue);
+
 typedef void (*bin_tree_bfs_callback)(void *context, struct bin_tree *tree, 
                                       int level, int breadth_index);
 

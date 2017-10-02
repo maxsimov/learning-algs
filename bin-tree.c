@@ -251,3 +251,29 @@ void bin_tree_DFS_postorder(struct bin_tree *tree, bin_tree_dfs_callback visit,
     
     deque_cleanup(&stack);
 }
+
+struct bin_tree *_bin_tree_random(int nodes, int max_value)
+{
+    if (!nodes)
+        return 0;
+        
+    struct bin_tree *root = bin_tree_create(random() % max_value, 0);
+
+    if (--nodes == 0)
+        return root;
+
+    int left_nodes = random() % nodes;
+    int right_nodes = nodes - left_nodes;
+
+    root->left = _bin_tree_random(left_nodes, max_value);
+    root->right = _bin_tree_random(right_nodes, max_value);
+    
+    return root;
+}
+
+struct bin_tree *bin_tree_random(unsigned seed, int nodes, int max_value)
+{
+    srandom(seed);
+    
+    return _bin_tree_random(nodes, max_value);
+}
