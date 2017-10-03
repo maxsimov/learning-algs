@@ -9,7 +9,8 @@ SOURCES=deque.c \
 APPS=test_deque \
 	 test_sort \
 	 test_bin_tree \
-	 test_hash
+	 test_hash \
+	 task-find-min-depth
 
 CC=gcc
 CFLAGS=-Wall -std=c99 -D_XOPEN_SOURCE_EXTENDED -D_XOPEN_SOURCE=500
