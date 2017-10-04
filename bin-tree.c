@@ -252,12 +252,14 @@ void bin_tree_DFS_postorder(struct bin_tree *tree, bin_tree_dfs_callback visit,
     deque_cleanup(&stack);
 }
 
-struct bin_tree *_bin_tree_random(int nodes, int max_value)
+struct bin_tree *_bin_tree_random(int nodes, int min_value, int max_value)
 {
     if (!nodes)
         return 0;
         
-    struct bin_tree *root = bin_tree_create(random() % max_value, 0);
+    unsigned range = max_value - min_value;
+
+    struct bin_tree *root = bin_tree_create(min_value + (random() % range), 0);
 
     if (--nodes == 0)
         return root;
@@ -265,8 +267,8 @@ struct bin_tree *_bin_tree_random(int nodes, int max_value)
     int left_nodes = random() % nodes;
     int right_nodes = nodes - left_nodes;
 
-    root->left = _bin_tree_random(left_nodes, max_value);
-    root->right = _bin_tree_random(right_nodes, max_value);
+    root->left = _bin_tree_random(left_nodes, min_value, max_value);
+    root->right = _bin_tree_random(right_nodes, min_value, max_value);
     
     return root;
 }
@@ -275,5 +277,14 @@ struct bin_tree *bin_tree_random(unsigned seed, int nodes, int max_value)
 {
     srandom(seed);
     
-    return _bin_tree_random(nodes, max_value);
+    return _bin_tree_random(nodes, 0, max_value);
 }
+
+struct bin_tree *bin_tree_random2(unsigned seed, int nodes, 
+                                  int min_value, int max_value)
+{
+    srandom(seed);
+    
+    return _bin_tree_random(nodes, min_value, max_value);
+}
+

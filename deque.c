@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "deque.h"
+#include "util.h"
 
 #define MIN_CAPACITY 4
 
@@ -23,6 +24,11 @@ void deque_cleanup(struct deque *q)
     q->head = q->tail = 0;
 }
 
+void deque_clear(struct deque *q)
+{
+    q->head = q->tail = 0;
+}
+
 int deque_length(struct deque *q)
 {
     int len = (q->tail - q->head);
@@ -31,6 +37,16 @@ int deque_length(struct deque *q)
         len += q->capacity;
 
     return len;
+}
+
+int deque_empty(struct deque *q)
+{
+    return deque_length(q) == 0;
+}
+
+void deque_swap(struct deque *a, struct deque *b)
+{
+    SWAP(*a, *b);
 }
 
 static
@@ -242,6 +258,32 @@ bool deque_pop_back_ptr(struct deque *q, void **data)
     _deque_rebalance(q);
     
     return true;
+}
+
+void deque_copy(struct deque *dst, struct deque *src)
+{
+    if (dst->capacity <= deque_length(src))
+    {
+        free(dst->items);
+        
+        int new_capacity = src->capacity*2;
+        dst->items = malloc(sizeof(union deque_item)*new_capacity);
+        dst->capacity = new_capacity;
+        dst->head = dst->tail = 0;
+    } else {
+        dst->head = dst->tail = 0;
+    }
+
+    if (src->head < src->tail)
+    {
+        dst->tail = src->tail - src->head;
+        memcpy(dst->items, &src->items[src->head], sizeof(union deque_item)*(dst->tail));
+    } else {
+        int lenbeforeend = src->capacity - src->head;
+        memcpy(dst->items, &src->items[src->head], sizeof(union deque_item)*lenbeforeend);
+        memcpy(&dst->items[lenbeforeend], &src->items[0], sizeof(union deque_item)*src->tail);
+        dst->tail = lenbeforeend + src->tail;
+    }
 }
 
 void deque_dump(struct deque *q, void (*p)(union deque_item *item))

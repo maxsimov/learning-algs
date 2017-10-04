@@ -17,8 +17,12 @@ struct deque
 
 void deque_init(struct deque *q);
 void deque_cleanup(struct deque *q);
-int deque_length(struct deque *q);
 
+void deque_clear(struct deque *q);
+int deque_length(struct deque *q);
+int deque_empty(struct deque *q);
+void deque_swap(struct deque *a, struct deque *b);
+void deque_copy(struct deque *dst, struct deque *src);
 
 // queue support
 void deque_push_back_int(struct deque *q, int value);
