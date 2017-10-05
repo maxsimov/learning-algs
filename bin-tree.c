@@ -54,43 +54,46 @@ void bin_tree_display_increase(struct bin_tree_display_context *ctx, char c)
 {
     int maxlen = ctx->send - ctx->sbeg;
     
-    if (maxlen < 4)
+    if (maxlen < 5)
         return;
         
-    ctx->sbeg[0] = c;
-    ctx->sbeg[1] = ' ';
+    ctx->sbeg[0] = ' ';
+    ctx->sbeg[1] = c;
     ctx->sbeg[2] = ' ';
-    ctx->sbeg[3] = 0;
+    ctx->sbeg[3] = ' ';
+    ctx->sbeg[4] = 0;
     
-    ctx->sbeg += 3;
+    ctx->sbeg += 4;
 }
 
 void bin_tree_display_descrease(struct bin_tree_display_context *ctx)
 {
     int maxdec = ctx->sbeg - ctx->buf;
     
-    if (maxdec > 3)
-        maxdec = 3;
+    if (maxdec > 4)
+        maxdec = 4;
         
-    ctx->sbeg -= 3;
+    ctx->sbeg -= maxdec;
     ctx->sbeg[0] = 0;
 }
 
 void _bin_tree_display(struct bin_tree *tree, 
                        struct bin_tree_display_context *ctx)
 {
-    printf("%d\n", tree->key);
+    printf("(%d)\n", tree->key);
     
     if (tree->left)
     {
-        printf("%sL--", ctx->buf);
+        printf("%s |\n", ctx->buf);
+        printf("%s L--", ctx->buf);
         bin_tree_display_increase(ctx, tree->right ? '|' : ' ');
         _bin_tree_display(tree->left, ctx);
         bin_tree_display_descrease(ctx);
     }
     if (tree->right)
     {
-        printf( "%sR--", ctx->buf);
+        printf("%s |\n", ctx->buf);
+        printf("%s R--", ctx->buf);
         bin_tree_display_increase(ctx, ' ');
         _bin_tree_display(tree->right, ctx);
         bin_tree_display_descrease(ctx);

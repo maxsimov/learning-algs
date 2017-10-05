@@ -43,11 +43,11 @@ void update_max_path(struct find_max_result *result, struct find_max_result *loc
     }
 }
 
-void add_path(struct bin_tree *tree, struct find_max_result *result, struct find_max_result *local)
+void add_path(struct bin_tree *tree, struct find_max_result *result, struct find_max_result *local, int add_on_top)
 {
     if (deque_empty(&local->max_path))
     {
-        deque_push_front_ptr(&local->max_path, tree);
+        deque_push_back_ptr(&local->max_path, tree);
         local->max_path_sum = tree->key;
         update_max_path(result, local);
         return;
@@ -57,12 +57,13 @@ void add_path(struct bin_tree *tree, struct find_max_result *result, struct find
     
     if (new_path_sum > tree->key)
     {
-        deque_push_front_ptr(&local->max_path, tree);
+        if (add_on_top) deque_push_front_ptr(&local->max_path, tree);
+         else deque_push_back_ptr(&local->max_path, tree);
         local->max_path_sum = new_path_sum;
         update_max_path(result, local);
     } else {
         deque_clear(&local->max_path);
-        deque_push_front_ptr(&local->max_path, tree);
+        deque_push_back_ptr(&local->max_path, tree);
         local->max_path_sum = tree->key;
         update_max_path(result, local);
     }
@@ -71,22 +72,10 @@ void add_path(struct bin_tree *tree, struct find_max_result *result, struct find
 void find_max_path_sum(struct bin_tree *tree, struct find_max_result *result, struct find_max_result *local)
 {
     assert( deque_empty(&local->max_path) );
-    
-    if (!tree->left)
-    {
-        if (tree->right)
-            find_max_path_sum(tree->right, result, local);
 
-        add_path(tree, result, local);
-        return;
-    }
-
-    if (!tree->right)
+    if (!tree->left && !tree->right)
     {
-        if (tree->left)
-            find_max_path_sum(tree->left, result, local);
-        
-        add_path(tree, result, local);
+        add_path(tree, result, local, 0);
         return;
     }
 
@@ -94,20 +83,42 @@ void find_max_path_sum(struct bin_tree *tree, struct find_max_result *result, st
     
     find_max_result_init(&left_result);
     find_max_result_init(&right_result);
-    
-    find_max_path_sum(tree->left, result, &left_result);
-    find_max_path_sum(tree->right, result, &right_result);
+
+    if (tree->left) {
+        find_max_path_sum(tree->left, result, &left_result);
+        
+        if (!tree->right)
+        {
+            deque_copy(&local->max_path, &left_result.max_path);
+            local->max_path_sum = left_result.max_path_sum;
+            add_path(tree, result, local, 0);
+            return;
+        }
+    }
+
+    if (tree->right) {
+        find_max_path_sum(tree->right, result, &right_result);
+
+        if (!tree->left)
+        {
+            deque_copy(&local->max_path, &right_result.max_path);
+            local->max_path_sum = right_result.max_path_sum;
+
+            add_path(tree, result, local, 0);
+            return;
+        }
+    }
     
     assert( !deque_empty(&left_result.max_path) );
     assert( !deque_empty(&right_result.max_path) );
 
-    int connection_sum = left_result.max_path_sum + right_result.max_path_sum + tree->key;
+    int connection_sum = left_result.max_path_sum + tree->key 
+                         + right_result.max_path_sum;
     if (connection_sum > result->max_path_sum)
     {
         result->max_path_sum = connection_sum;
-        
         deque_copy(&result->max_path, &left_result.max_path);
-        deque_push_front_ptr(&result->max_path, tree);
+        deque_push_back_ptr(&result->max_path, tree);
         
         struct deque temp;
         deque_init(&temp);
@@ -120,12 +131,14 @@ void find_max_path_sum(struct bin_tree *tree, struct find_max_result *result, st
         deque_cleanup(&temp);
     }
     
-    if (left_result.max_path_sum < right_result.max_path_sum)
+    if (left_result.max_path_sum < right_result.max_path_sum) {
         deque_copy(&local->max_path, &right_result.max_path);
-    else
+        local->max_path_sum = right_result.max_path_sum;
+    } else {
         deque_copy(&local->max_path, &left_result.max_path);
-
-    add_path(tree, result, local);
+        local->max_path_sum = left_result.max_path_sum;
+    }
+    add_path(tree, result, local, 0);
 
     find_max_result_cleanup(&right_result);
     find_max_result_cleanup(&left_result);
@@ -184,11 +197,30 @@ void test_3()
     bin_tree_destroy(tree);
 }
 
+void test_4()
+{
+    struct bin_tree *tree;
+    
+    tree = bin_tree_create(10, 0);
+    tree->left = bin_tree_create(2, 0);
+        tree->left->left = bin_tree_create(20, 0);
+        tree->left->right = bin_tree_create(1, 0);
+    tree->right = bin_tree_create(10, 0);
+        tree->right->right = bin_tree_create(-25, 0);
+            tree->right->right->left = bin_tree_create(3, 0);
+            tree->right->right->right = bin_tree_create(4, 0);
+    
+    find_max_exec(tree, "Find max path sum in example tree ...");
+
+    bin_tree_destroy(tree);
+}
+
 int main(int argc, char *argv[])
 {
     test_1();
     test_2();
     test_3();
+    test_4();
 
     return 0;
 }
