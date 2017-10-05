@@ -68,7 +68,7 @@ bool check_and_insert(struct bin_tree *tree, int key)
                 tree = tree->left;
                 continue;
             }
-            
+
             if (tree->right)
                 return false;
             
