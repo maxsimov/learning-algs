@@ -14,10 +14,11 @@ APPS=test_deque \
 	 task-find-min-depth \
 	 task-max-path-sum-bin-tree \
 	 task-check-array-preorder \
-	 task-check-btree-is-full
+	 task-check-btree-is-full \
+	 task-bottom-view-btree
 
 CC=gcc
-CFLAGS=-Wall -std=c99 -D_XOPEN_SOURCE_EXTENDED -D_XOPEN_SOURCE=500
+CFLAGS=-Wall -std=c99 -D_XOPEN_SOURCE_EXTENDED -D_XOPEN_SOURCE=500 -Wno-pointer-to-int-cast -Wno-int-to-pointer-cast
 LDFLAGS=
 OBJDIR=obj
 OBJECTS=$(patsubst %.c, $(OBJDIR)/%.o, $(SOURCES))
