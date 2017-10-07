@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <assert.h>
 #include <stdbool.h>
+#include <stdlib.h>
+#include <limits.h>
 #include "bin-tree.h"
 
 /* 
@@ -30,7 +32,7 @@
         /   \
        /     \
       /       \
-     2+         9+
+     2+        9+
     / \       / \ 
    2   4+     8+   9
             /
@@ -107,13 +109,112 @@ bool check_if_preorder_tree(const int input[], int size)
     return true;
 }
 
+
+// solution 2: using stack
+
+struct stack
+{
+    int *data;
+    int capacity;
+    int position;
+};
+
+bool stack_init(struct stack *stack, int capacity)
+{
+    stack->capacity = capacity;
+    stack->position = 0;
+    stack->data = malloc(capacity*sizeof(stack->data[0])); 
+    
+    return stack->data;
+}
+
+void stack_cleanup(struct stack *stack)
+{
+    free(stack->data);
+}
+
+void stack_push(struct stack *stack, int value)
+{
+    if (stack->position >= stack->capacity)
+    {
+        stack->capacity = stack->capacity*2;
+        stack->data = realloc(stack->data, stack->capacity);
+        assert(stack->data);
+    }
+    
+    stack->data[stack->position++] = value;
+}
+
+bool stack_empty(struct stack *stack)
+{
+    return stack->position == 0;
+}
+
+bool stack_pop(struct stack *stack, int *value)
+{
+    if (stack->position == 0)
+        return false;
+
+    *value = stack->data[--stack->position];
+
+    return true;
+}
+
+int stack_top(struct stack *stack)
+{
+    return stack->data[stack->position-1];
+}
+
+bool check_if_preorder_tree2_worker(struct stack *stack,
+                                    const int *begin, const int *end)
+{
+    if (begin == end)
+        return true;
+        
+    int lowerBound = INT_MIN;
+    
+    for (;begin != end; ++begin)
+    {
+        int next = *begin;
+
+        if (next < lowerBound)
+            return false;
+        
+        while (!stack_empty(stack) && stack_top(stack) < next)
+            stack_pop(stack, &lowerBound);
+        
+        stack_push(stack, next);
+    }
+    
+    return true;
+}
+
+bool check_if_preorder_tree2(const int input[], int size)
+{
+    if (size < 1)
+        return true;
+
+    struct stack stack;
+    
+    bool s = stack_init(&stack, 16);
+    assert(s);
+    if (!s)
+        return false;
+
+    s = check_if_preorder_tree2_worker(&stack, input, input + size);
+
+    stack_cleanup(&stack);
+        
+    return s;
+}
+
 void check_preorder(const char *msg, const int input[], int size)
 {
     printf("Checking %s:", msg);
     dump(input, size);
     printf("\n");
     
-    bool result = check_if_preorder_tree(input, size);
+    bool result = check_if_preorder_tree2(input, size);
     
     if (result)
         printf("Yes: Array can represent Preorder Traversal of Binary Search Tree\n");
