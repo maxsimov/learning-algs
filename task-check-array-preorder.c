@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include "bin-tree.h"
+#include "stack.h"
 
 /* 
   http://www.geeksforgeeks.org/check-if-a-given-array-can-represent-preorder-traversal-of-binary-search-tree/
@@ -112,58 +113,7 @@ bool check_if_preorder_tree(const int input[], int size)
 
 // solution 2: using stack
 
-struct stack
-{
-    int *data;
-    int capacity;
-    int position;
-};
 
-bool stack_init(struct stack *stack, int capacity)
-{
-    stack->capacity = capacity;
-    stack->position = 0;
-    stack->data = malloc(capacity*sizeof(stack->data[0])); 
-    
-    return stack->data;
-}
-
-void stack_cleanup(struct stack *stack)
-{
-    free(stack->data);
-}
-
-void stack_push(struct stack *stack, int value)
-{
-    if (stack->position >= stack->capacity)
-    {
-        stack->capacity = stack->capacity*2;
-        stack->data = realloc(stack->data, stack->capacity);
-        assert(stack->data);
-    }
-    
-    stack->data[stack->position++] = value;
-}
-
-bool stack_empty(struct stack *stack)
-{
-    return stack->position == 0;
-}
-
-bool stack_pop(struct stack *stack, int *value)
-{
-    if (stack->position == 0)
-        return false;
-
-    *value = stack->data[--stack->position];
-
-    return true;
-}
-
-int stack_top(struct stack *stack)
-{
-    return stack->data[stack->position-1];
-}
 
 bool check_if_preorder_tree2_worker(struct stack *stack,
                                     const int *begin, const int *end)

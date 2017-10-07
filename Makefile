@@ -5,14 +5,16 @@ SOURCES=deque.c \
 		quick_sort.c \
 		insertion_sort.c \
 		bin-tree.c \
-		hash.c
+		hash.c \
+		stack.c
 APPS=test_deque \
 	 test_sort \
 	 test_bin_tree \
 	 test_hash \
 	 task-find-min-depth \
 	 task-max-path-sum-bin-tree \
-	 task-check-array-preorder
+	 task-check-array-preorder \
+	 task-check-btree-is-full
 
 CC=gcc
 CFLAGS=-Wall -std=c99 -D_XOPEN_SOURCE_EXTENDED -D_XOPEN_SOURCE=500
