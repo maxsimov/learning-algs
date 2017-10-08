@@ -18,7 +18,8 @@ APPS=test_deque \
 	 task-bottom-view-btree \
 	 task-top-view-btree \
 	 task-rm-nodes-pathlen \
-	 task-lca-bst
+	 task-lca-bst \
+	 task-btree-sub
 
 CC=gcc
 CFLAGS=-Wall -std=c99 -D_XOPEN_SOURCE_EXTENDED -D_XOPEN_SOURCE=500 -Wno-pointer-to-int-cast -Wno-int-to-pointer-cast
