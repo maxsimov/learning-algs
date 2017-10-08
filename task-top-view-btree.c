@@ -4,34 +4,48 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <stdint.h>
 #include "bin-tree.h"
 #include "deque.h"
 #include "hash.h"
 
 /* 
-  http://www.geeksforgeeks.org/bottom-view-binary-tree/
+  http://www.geeksforgeeks.org/print-nodes-top-view-binary-tree/
   
-  Given a Binary Tree, we need to print the bottom view from left to right. 
-  A node x is there in output if x is the bottommost node at its horizontal 
-  distance. Horizontal distance of left child of a node x is equal to horizontal 
-  distance of x minus 1, and that of right child is 
-  horizontal distance of x plus 1.
+  Top view of a binary tree is the set of nodes visible when the tree is viewed 
+  from the top. Given a binary tree, print the top view of it. The output nodes 
+  can be printed in any order. Expected time complexity is O(n)
 
-                      20
-                    /    \
-                  8      22
-                /   \      \
-              5      3      25
-                    / \      
-                  10    14
-  If there are multiple bottom-most nodes for a horizontal distance from root, 
-  then print the later one in level traversal.
+  A node x is there in output if x is the topmost node at its horizontal 
+  distance. Horizontal distance of left child of a node x is equal to horizontal 
+  distance of x minus 1, and that of right child is horizontal distance 
+  of x plus 1.
+
+       1
+    /     \
+   2       3
+  /  \    / \
+ 4    5  6   7
+Top view of the above binary tree is
+4 2 1 3 7
+
+        1
+      /   \
+    2       3
+      \   
+        4  
+          \
+            5
+             \
+               6
+Top view of the above binary tree is
+2 1 3 6
 
 */
 
 unsigned hash_distance(void *key)
 {
-    return (unsigned)key;
+    return (uintptr_t)key;
 }
 
 int hash_distance_compare(void *key1, void *key2)
@@ -39,14 +53,12 @@ int hash_distance_compare(void *key1, void *key2)
     return key1 == key2;
 }
 
-void print_bottom_line(struct bin_tree *tree)
+void print_top_line(struct bin_tree *tree)
 {
-    struct deque bottom_view;
     struct deque tree_traversal;
     struct deque tree_distance;
     struct hash_table *ht;
     
-    deque_init(&bottom_view);
     deque_init(&tree_traversal);
     deque_init(&tree_distance);
     ht = hash_create(hash_distance, hash_distance_compare, 32);
@@ -71,7 +83,8 @@ void print_bottom_line(struct bin_tree *tree)
         if (horizontal_distance < lower_bound)
             lower_bound = horizontal_distance;
         
-        hash_insert(ht, (void *)horizontal_distance, node);
+        if (!hash_lookup(ht, (void *)horizontal_distance))
+            hash_insert(ht, (void *)horizontal_distance, node);
         
         if (node->left)
         {
@@ -95,7 +108,7 @@ void print_bottom_line(struct bin_tree *tree)
         }
     }
     
-    printf("Bottom:");
+    printf("Top:");
     for (int i=lower_bound; i<=upper_bound; ++i)
     {
         struct bin_tree *n = hash_lookup(ht, (void *)i);
@@ -110,24 +123,22 @@ void print_bottom_line(struct bin_tree *tree)
     hash_destroy(ht);
     deque_cleanup(&tree_distance);
     deque_cleanup(&tree_traversal);
-    deque_cleanup(&bottom_view);
 }
 
 void test_1()
 {
     struct bin_tree *tree;
     
-    tree = bin_tree_create(20, 0);
-    tree->left = bin_tree_create(8, 0);
-        tree->left->left = bin_tree_create(5, 0);
-        tree->left->right = bin_tree_create(3, 0);
-            tree->left->right->left = bin_tree_create(10, 0);
-            tree->left->right->right = bin_tree_create(14, 0);
-    tree->right = bin_tree_create(22, 0);
-        tree->right->right = bin_tree_create(25, 0);
+    tree = bin_tree_create(1, 0);
+    tree->left = bin_tree_create(2,0);
+        tree->left->left = bin_tree_create(4, 0);
+        tree->left->right = bin_tree_create(5, 0);
+    tree->right = bin_tree_create(3, 0);
+        tree->right->left = bin_tree_create(6, 0);
+        tree->right->right = bin_tree_create(7, 0);
 
     bin_tree_display(tree);
-    print_bottom_line(tree);
+    print_top_line(tree);
 
     bin_tree_destroy(tree);
 }
@@ -136,18 +147,15 @@ void test_2()
 {
     struct bin_tree *tree;
 
-    tree = bin_tree_create(20, 0);
-    tree->left = bin_tree_create(8, 0);
-        tree->left->left = bin_tree_create(5, 0);
-        tree->left->right = bin_tree_create(3, 0);
-            tree->left->right->left = bin_tree_create(10, 0);
-            tree->left->right->right = bin_tree_create(14, 0);
-    tree->right = bin_tree_create(22, 0);
-        tree->right->left = bin_tree_create(4, 0);
-        tree->right->right = bin_tree_create(25, 0);
-    
+    tree = bin_tree_create(1, 0);
+    tree->left = bin_tree_create(2,0);
+        tree->left->right = bin_tree_create(4, 0);
+            tree->left->right->right = bin_tree_create(5, 0);
+                tree->left->right->right->right = bin_tree_create(6, 0);
+    tree->right = bin_tree_create(3, 0);
+
     bin_tree_display(tree);
-    print_bottom_line(tree);
+    print_top_line(tree);
 
     bin_tree_destroy(tree);
 }
