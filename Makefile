@@ -6,11 +6,13 @@ SOURCES=deque.c \
 		insertion_sort.c \
 		bin-tree.c \
 		hash.c \
-		stack.c
+		stack.c \
+		darray.c
 APPS=test_deque \
 	 test_sort \
 	 test_bin_tree \
 	 test_hash \
+	 test_darray \
 	 task-find-min-depth \
 	 task-max-path-sum-bin-tree \
 	 task-check-array-preorder \
