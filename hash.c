@@ -105,6 +105,11 @@ void hash_insert(struct hash_table *ht, void *key, void *obj)
     }
 }
 
+void hash_insert_int(struct hash_table *h, void *key, uintptr_t value)
+{
+    hash_insert(h, key, (void *)value);
+}
+
 void *hash_delete(struct hash_table *ht, void *key)
 {
     unsigned hash = (*ht->hf)(key);
@@ -134,7 +139,7 @@ void *hash_delete(struct hash_table *ht, void *key)
     return 0;    
 }
 
-void *hash_lookup(struct hash_table *ht, void *key)
+struct hash_bucket *_hash_lookup(struct hash_table *ht, void *key)
 {
     unsigned hash = (*ht->hf)(key);
     int index = hash % ht->size;
@@ -147,11 +152,30 @@ void *hash_lookup(struct hash_table *ht, void *key)
     while (cur)
     {
         if ( (*ht->hc)(key, cur->key) )
-            return cur->obj;
+            return cur;
         cur = cur->next;
     }
 
     return 0;    
+}
+
+void *hash_lookup(struct hash_table *ht, void *key)
+{
+    struct hash_bucket *b = _hash_lookup(ht, key);
+    
+    return b ? b->obj : 0;
+}
+
+bool hash_lookup_int(struct hash_table *h, void *key, uintptr_t *value)
+{
+    struct hash_bucket *b = _hash_lookup(h, key);
+    
+    if (!b)
+        return false;
+    
+    *value = (uintptr_t)b->obj;
+    
+    return true;
 }
 
 unsigned jenkins_one_at_a_time_hash_str(void *key)
