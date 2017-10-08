@@ -7,7 +7,9 @@ SOURCES=deque.c \
 		bin-tree.c \
 		hash.c \
 		stack.c \
-		darray.c
+		darray.c \
+		graph.c
+
 APPS=test_deque \
 	 test_sort \
 	 test_bin_tree \
