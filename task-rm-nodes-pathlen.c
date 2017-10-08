@@ -49,79 +49,27 @@
  If k is 3 or less than 3, then nothing is deleted.
 */
 
-unsigned hash_f(void *n)
-{
-    struct bin_tree *tree = (struct bin_tree *)n;
-    return tree->key;
-}
-
-int hash_cmp(void *key1, void *key2)
-{
-    return key1 == key2;
-}
-
-int calc_path(struct bin_tree *tree, struct hash_table *ht, int path)
-{
-    int left_path=0, right_path=0;
-    
-    if (tree->left)
-        left_path = calc_path(tree->left, ht, path+1);
-        
-    if (tree->right)
-        right_path = calc_path(tree->right, ht, path+1);
-    
-    int max_path = left_path < right_path ? right_path : left_path;
-    if (max_path < path)
-        max_path = path;
-
-    uintptr_t stored_path;
-
-    if (!hash_lookup_int(ht, tree, &stored_path) || stored_path < max_path)
-        hash_insert_int(ht, tree, max_path);
-
-     return max_path;
-}
-
-struct bin_tree *delete_nodes(struct bin_tree *tree, struct hash_table *ht, 
-                              int pathlen)
+struct bin_tree *delete_nodes(struct bin_tree *tree, int path, int max_path)
 {
     if (!tree)
         return 0;
-        
-    tree->left = delete_nodes(tree->left, ht, pathlen);
-    tree->right = delete_nodes(tree->right, ht, pathlen);
 
-    if (tree->left || tree->right)
-        return tree;
-        
-    uintptr_t stored_path;
+    tree->left = delete_nodes(tree->left, path+1, max_path);
+    tree->right = delete_nodes(tree->right, path+1, max_path);
 
-    if (hash_lookup_int(ht, tree, &stored_path) && stored_path >= pathlen)
+    if (tree->left || tree->right || path >= max_path)
         return tree;
-        
-    free(tree);
     
+    free(tree);
     return 0;
 }
 
-struct bin_tree *delete_nodes_ifpath_lt(struct bin_tree *tree, int pathlen)
-{
-    struct hash_table *ht = hash_create(hash_f, hash_cmp, 16);
-    
-    calc_path(tree, ht, 1);
-    struct bin_tree *ret = delete_nodes(tree, ht, pathlen);
-    
-    hash_destroy(ht);
-    
-    return ret;
-}
-
-void delete_nodes_ifpath_lt_engine(struct bin_tree *tree, int pathlen)
+void delete_nodes_engine(struct bin_tree *tree, int pathlen)
 {
     printf("-----------------------------\n");
     bin_tree_display(tree);
     printf("Deleting nodes if they are not on path %d\n", pathlen);
-    tree = delete_nodes_ifpath_lt(tree, pathlen);
+    tree = delete_nodes(tree, 1, pathlen);
     
     if (tree)
     {
@@ -145,7 +93,7 @@ void test_1()
         tree->right->right = bin_tree_create(6, 0);
             tree->right->right->left = bin_tree_create(8, 0);
     
-    delete_nodes_ifpath_lt_engine(tree, 4);
+    delete_nodes_engine(tree, 4);
 }
 
 void test_2()
@@ -161,7 +109,7 @@ void test_2()
         tree->right->right = bin_tree_create(6, 0);
             tree->right->right->left = bin_tree_create(8, 0);
     
-    delete_nodes_ifpath_lt_engine(tree, 5);
+    delete_nodes_engine(tree, 5);
 }
 
 int main(int argc, char *argv[])
