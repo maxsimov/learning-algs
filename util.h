@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <stddef.h>
+#include <string.h>
 
 static
 inline void swap_detail(void* p1, void* p2, void* tmp, size_t sz)

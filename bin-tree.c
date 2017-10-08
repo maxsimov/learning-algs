@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <ctype.h>
 #include "deque.h"
 #include "bin-tree.h"
 
@@ -12,6 +13,30 @@ struct bin_tree *bin_tree_create(int root_key, void *data)
     tree->left = tree->right = 0;
     
     return tree;
+}
+
+struct bin_tree *_bin_tree_create_perfect(int *key, int levels, int cur)
+{
+    if (levels == cur)
+        return 0;
+        
+    (*key)++;
+    struct bin_tree *root = bin_tree_create(*key, 0);
+
+    root->left  = _bin_tree_create_perfect(key, levels, cur+1);
+    root->right = _bin_tree_create_perfect(key, levels, cur+1);
+    
+    return root;
+}
+
+struct bin_tree *bin_tree_create_perfect(int root_key, int levels)
+{
+    struct bin_tree *root = bin_tree_create(root_key, 0);
+    
+    root->left  = _bin_tree_create_perfect(&root_key, levels, 1);
+    root->right = _bin_tree_create_perfect(&root_key, levels, 1);
+
+    return root;
 }
 
 static
@@ -48,7 +73,18 @@ struct bin_tree_display_context
     char buf[128];
     char *sbeg;
     char *send;
+    bool display_ascii;
 };
+
+void bin_tree_display_context_init(struct bin_tree_display_context *ctx)
+{
+    ctx->sbeg = ctx->buf;
+    ctx->send = &ctx->buf[sizeof(ctx->buf)/sizeof(ctx->buf[0])-1];
+    ctx->display_ascii = false;
+    
+    *ctx->sbeg = 0;
+    *ctx->send = 0;
+}
 
 void bin_tree_display_increase(struct bin_tree_display_context *ctx, char c)
 {
@@ -80,7 +116,8 @@ void bin_tree_display_descrease(struct bin_tree_display_context *ctx)
 void _bin_tree_display(struct bin_tree *tree, 
                        struct bin_tree_display_context *ctx)
 {
-    printf("(%d)\n", tree->key);
+    if (ctx->display_ascii && isascii(tree->key)) printf("(%c)\n", tree->key);
+     else printf("(%d)\n", tree->key);
     
     if (tree->left)
     {
@@ -103,13 +140,19 @@ void _bin_tree_display(struct bin_tree *tree,
 void bin_tree_display(struct bin_tree *tree)
 {
     struct bin_tree_display_context ctx;
+    
+    bin_tree_display_context_init(&ctx);
+    
+    _bin_tree_display(tree, &ctx);
+}
 
-    ctx.sbeg = ctx.buf;
-    ctx.send = &ctx.buf[sizeof(ctx.buf)/sizeof(ctx.buf[0])-1];
-    
-    *ctx.sbeg = 0;
-    *ctx.send = 0;
-    
+void bin_tree_display_asscii(struct bin_tree *tree)
+{
+    struct bin_tree_display_context ctx;
+
+    bin_tree_display_context_init(&ctx);
+
+    ctx.display_ascii = true;
     _bin_tree_display(tree, &ctx);
 }
 

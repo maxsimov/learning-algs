@@ -12,6 +12,8 @@ struct bin_tree
 struct bin_tree *bin_tree_create(int root_key, void *data);
 void bin_tree_destroy(struct bin_tree *tree);
 void bin_tree_display(struct bin_tree *tree);
+void bin_tree_display_asscii(struct bin_tree *tree);
+struct bin_tree *bin_tree_create_perfect(int root_key, int levels);
 struct bin_tree *bin_tree_random(unsigned seed, int nodes, int max_value);
 struct bin_tree *bin_tree_random2(unsigned seed, int nodes, int min_value, int max_value);
 
