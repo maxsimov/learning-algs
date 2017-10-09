@@ -15,6 +15,7 @@ APPS=test_deque \
 	 test_bin_tree \
 	 test_hash \
 	 test_darray \
+	 test_graph \
 	 task-find-min-depth \
 	 task-max-path-sum-bin-tree \
 	 task-check-array-preorder \
