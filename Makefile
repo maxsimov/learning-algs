@@ -7,6 +7,7 @@ SOURCES=deque.c \
 		bin-tree.c \
 		hash.c \
 		stack.c \
+		queue.c \
 		darray.c \
 		graph.c
 
@@ -16,6 +17,7 @@ APPS=test_deque \
 	 test_hash \
 	 test_darray \
 	 test_graph \
+	 test_queue \
 	 task-find-min-depth \
 	 task-max-path-sum-bin-tree \
 	 task-check-array-preorder \
@@ -25,7 +27,8 @@ APPS=test_deque \
 	 task-rm-nodes-pathlen \
 	 task-lca-bst \
 	 task-btree-sub \
-	 task-reverse-alt-levels
+	 task-reverse-alt-levels \
+	 task-graph-simple-bfs
 
 CC=gcc
 CFLAGS=-Wall -std=c99 -D_XOPEN_SOURCE_EXTENDED -D_XOPEN_SOURCE=500 -Wno-pointer-to-int-cast -Wno-int-to-pointer-cast
