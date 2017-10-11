@@ -92,6 +92,20 @@ int _heap_pop(int *data, int *len, bool lt)
     return value;
 }
 
+static
+bool _heap_push(int *data, int *len, int max_len, int value, bool lt)
+{
+    if (*len >= max_len)
+        return false;
+    data[*len] = value;
+    
+    (*len)++;
+    
+    _sift_up(data, *len, len);
+
+    return true;
+}
+
 void heapify_min(int *data, int len)
 {
     _heapify(data, len, false);
@@ -100,6 +114,11 @@ void heapify_min(int *data, int len)
 int heap_pop_min(int *data, int *len)
 {
     return _heap_pop(data, len, false);
+}
+
+bool heap_push_min(int *data, int *len, int max_len, int value)
+{
+    return _heap_push(data, len, max_len, value, false);
 }
 
 void sift_up_min(int *data, int len)
@@ -120,6 +139,11 @@ void heapify_max(int *data, int len)
 int heap_pop_max(int *data, int *len)
 {
     return _heap_pop(data, len, true);
+}
+
+bool heap_push_max(int *data, int *len, int max_len, int value)
+{
+    return _heap_push(data, len, max_len, value, true);
 }
 
 void sift_up_max(int *data, int len)

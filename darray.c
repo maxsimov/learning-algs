@@ -26,6 +26,11 @@ void darray_destroy(struct darray *a)
     free(a);
 }
 
+int *darray_data(struct darray *a)
+{
+    return a->data;
+}
+
 void _optimize_space(struct darray *a)
 {
     if (a->capacity <= 16)

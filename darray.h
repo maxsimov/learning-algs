@@ -4,6 +4,7 @@
 struct darray *darray_create(int capacity);
 void darray_destroy(struct darray *a);
 
+int *darray_data(struct darray *a);
 int darray_get(struct darray *a, int index);
 void darray_set(struct darray *a, int index, int value);
 int darray_length(struct darray *a);
