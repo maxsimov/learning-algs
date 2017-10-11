@@ -16,3 +16,5 @@ inline void swap_detail(void* p1, void* p2, void* tmp, size_t sz)
         swap_detail(&(a), &(b), \
          (char[(sizeof(a) == sizeof(b)) ? (ptrdiff_t)sizeof(a) : -1]){0}, \
          sizeof(a))
+
+void dump_array(const char *name, int a[], int len);

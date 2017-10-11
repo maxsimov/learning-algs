@@ -1,16 +1,8 @@
 #include <stdio.h>
+#include "util.h"
 #include "merge_sort.h"
 #include "quick_sort.h"
 #include "insertion_sort.h"
-
-
-void dump_array(const char *comment, int a[], int len)
-{
-    printf("%s {", comment);
-    for (int i=0; i<len; ++i)
-        printf(" %d", a[i]);
-    printf(" }\n");
-}
 
 void test_merge_sort()
 {
