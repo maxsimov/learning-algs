@@ -12,6 +12,9 @@ inline void swap_detail(void* p1, void* p2, void* tmp, size_t sz)
    memcpy(p2 , tmp, sz);
 }
 
+void *xmalloc(size_t size);
+void die(const char *msg);
+
 #define SWAP(a, b) \
         swap_detail(&(a), &(b), \
          (char[(sizeof(a) == sizeof(b)) ? (ptrdiff_t)sizeof(a) : -1]){0}, \

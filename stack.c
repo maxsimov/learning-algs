@@ -3,22 +3,26 @@
 #include <assert.h>
 
 #include "stack.h"
+#include "util.h"
 
-bool stack_init(struct stack *stack, int capacity)
+struct stack *stack_create(int capacity)
 {
+    struct stack *stack = xmalloc(sizeof *stack);
+    
     stack->capacity = capacity;
     stack->position = 0;
-    stack->data = malloc(capacity*sizeof(stack->data[0])); 
+    stack->data = xmalloc(sizeof(stack->data[0])*capacity); 
     
-    return stack->data;
+    return stack;
 }
 
-void stack_cleanup(struct stack *stack)
+void stack_destroy(struct stack *stack)
 {
     free(stack->data);
+    free(stack);
 }
 
-void stack_push(struct stack *stack, int value)
+void stack_push(struct stack *stack, intptr_t value)
 {
     if (stack->position >= stack->capacity)
     {
@@ -35,7 +39,7 @@ bool stack_empty(struct stack *stack)
     return stack->position == 0;
 }
 
-bool stack_pop(struct stack *stack, int *value)
+bool stack_pop(struct stack *stack, intptr_t *value)
 {
     if (stack->position == 0)
         return false;
@@ -45,7 +49,7 @@ bool stack_pop(struct stack *stack, int *value)
     return true;
 }
 
-int stack_top(struct stack *stack)
+intptr_t stack_top(struct stack *stack)
 {
     return stack->data[stack->position-1];
 }

@@ -121,7 +121,7 @@ bool check_if_preorder_tree2_worker(struct stack *stack,
     if (begin == end)
         return true;
         
-    int lowerBound = INT_MIN;
+    intptr_t lowerBound = INT_MIN;
     
     for (;begin != end; ++begin)
     {
@@ -144,16 +144,11 @@ bool check_if_preorder_tree2(const int input[], int size)
     if (size < 1)
         return true;
 
-    struct stack stack;
-    
-    bool s = stack_init(&stack, 16);
-    assert(s);
-    if (!s)
-        return false;
+    struct stack *stack = stack_create(16);
 
-    s = check_if_preorder_tree2_worker(&stack, input, input + size);
+    bool s = check_if_preorder_tree2_worker(stack, input, input + size);
 
-    stack_cleanup(&stack);
+    stack_destroy(stack);
         
     return s;
 }

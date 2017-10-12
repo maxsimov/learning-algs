@@ -85,7 +85,6 @@ struct ListNode* mergeKLists(struct ListNode** lists, int listsSize)
     return head;
 }
 
-
 struct ListNode *create_list(int input[], int n)
 {
     if (n < 1)
