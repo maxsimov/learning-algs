@@ -33,7 +33,8 @@ APPS=test_deque \
 	 task-btree-sub \
 	 task-reverse-alt-levels \
 	 task-graph-simple-bfs \
-	 task-graph-simple-dfs
+	 task-graph-simple-dfs \
+	 task-graph-cycle
 
 CC=gcc
 CFLAGS=-Wall -Werror -std=c99 -D_XOPEN_SOURCE_EXTENDED -D_XOPEN_SOURCE=500 \
