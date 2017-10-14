@@ -183,6 +183,78 @@ bool sgraph_is_cycle(struct sgraph *g, bool it)
     return cycles;
 }
 
+enum  VCOLOR { WHITE, GREY, BLACK };
+
+bool sgraph_is_cycle_colors_it(struct sgraph *g, enum VCOLOR *colors, int start)
+{
+    struct stack *s = stack_create(4);
+    bool cycles = false;
+
+    stack_push(s, start);    
+    
+    bool change_color = false;
+    intptr_t cur;
+    while (stack_pop(s, &cur))
+    {
+        if (change_color)
+        {
+            colors[cur] = BLACK;
+            change_color = false;
+            continue;
+        }
+        
+        if (cur == g->vertices)
+        {
+            change_color = true;
+            continue;
+        }
+        
+        if (colors[cur] == BLACK)
+            continue;
+            
+        if (colors[cur] ==  GREY)
+        {
+            cycles = true;
+            break;
+        }
+        
+        colors[cur] = GREY;
+        stack_push(s, cur);    
+        stack_push(s, g->vertices);
+        
+        struct darray *adj = g->adj[cur];
+        
+        for (int i=0, len=darray_length(adj); i<len;  ++i)
+            stack_push(s, darray_get(adj, i));
+    }
+    
+    stack_destroy(s);
+    return cycles;
+}
+
+bool sgraph_is_cycle_colors(struct sgraph *g)
+{
+    enum VCOLOR *colors = xmalloc(sizeof(enum VCOLOR[g->vertices]));
+
+    for (int i=0; i<g->vertices; ++i)
+        colors[i] = WHITE;
+
+    bool cycles = false;
+
+    for (int i=0; i<g->vertices; ++i)
+    {
+        if (sgraph_is_cycle_colors_it(g, colors, i))
+        {
+            cycles = true;
+            break;
+        }
+    }
+
+    free(colors);
+
+    return cycles;
+}
+
 void is_cycle_worker(struct sgraph *g)
 {
     if (sgraph_is_cycle(g, false)) printf("Recursion: graph has cycle!\n");
@@ -190,6 +262,9 @@ void is_cycle_worker(struct sgraph *g)
     
     if (sgraph_is_cycle(g, true)) printf("Iteration: graph has cycle!\n");
      else printf("Iteration: graph doesn't have cycle!\n");
+     
+    if (sgraph_is_cycle_colors(g)) printf("Colors: graph has cycle!\n");
+     else printf("Colors: graph doesn't have cycle!\n");
 }
 
 void test_1()
