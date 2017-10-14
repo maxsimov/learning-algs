@@ -27,7 +27,7 @@ void stack_push(struct stack *stack, intptr_t value)
     if (stack->position >= stack->capacity)
     {
         stack->capacity = stack->capacity*2;
-        stack->data = realloc(stack->data, stack->capacity);
+        stack->data = realloc(stack->data, sizeof(stack->data[0])*stack->capacity);
         assert(stack->data);
     }
     

@@ -90,7 +90,68 @@ bool sgraph_is_cycle_from_vertex(struct sgraph *g, int start,
     return false;
 }
 
-bool sgraph_is_cycle(struct sgraph *g)
+bool sgraph_is_cycle_from_vertex_it(struct sgraph *g, int start, 
+                                 bool *visited, bool *path)
+{
+    if (visited[start])
+        return false;
+
+    struct stack *s = stack_create(4);
+    bool ret = false;
+    
+    path[start] = true;
+    stack_push(s, start);
+    stack_push(s, g->vertices);
+
+    stack_push(s, start);
+    
+    intptr_t cur;
+    bool back_track = false;
+    
+    while (stack_pop(s, &cur))
+    {
+        if (back_track)
+        {
+            path[cur] = false;
+            back_track = false;
+            continue;
+        }
+        
+        if (cur == g->vertices)
+        {
+            back_track = true;
+            continue;
+        }
+        
+        if (visited[cur])
+        {
+            if (!path[cur])
+                continue;
+
+            ret = true;
+            break;
+        }
+        
+        visited[cur] = true;
+        
+        path[cur] = true;
+        stack_push(s, cur);
+        stack_push(s, g->vertices);
+        
+        struct darray *adj = g->adj[cur];
+        
+        for (int i=0, len=darray_length(adj); i<len;  ++i)
+        {
+            int vtx = darray_get(adj, i);
+            stack_push(s, vtx);
+        }
+    }
+
+    stack_destroy(s);
+    return ret;
+}
+
+bool sgraph_is_cycle(struct sgraph *g, bool it)
 {
     bool *visited = xmalloc(sizeof(bool[g->vertices]));
     bool *path = xmalloc(sizeof(bool[g->vertices]));
@@ -104,7 +165,12 @@ bool sgraph_is_cycle(struct sgraph *g)
     bool cycles = false;
     for (int i=0; i<g->vertices; ++i)
     {
-        if (sgraph_is_cycle_from_vertex(g, i, visited, path))
+        bool rt;
+
+        if (it) rt = sgraph_is_cycle_from_vertex_it(g, i, visited, path);
+         else rt = sgraph_is_cycle_from_vertex(g, i, visited, path); 
+        
+        if (rt)
         {
             cycles = true;
             break;
@@ -119,8 +185,11 @@ bool sgraph_is_cycle(struct sgraph *g)
 
 void is_cycle_worker(struct sgraph *g)
 {
-    if (sgraph_is_cycle(g)) printf("graph has cycle!\n");
-     else printf("graph doesn't have cycle!\n");
+    if (sgraph_is_cycle(g, false)) printf("Recursion: graph has cycle!\n");
+     else printf("Recursion: graph doesn't have cycle!\n");
+    
+    if (sgraph_is_cycle(g, true)) printf("Iteration: graph has cycle!\n");
+     else printf("Iteration: graph doesn't have cycle!\n");
 }
 
 void test_1()
@@ -151,7 +220,6 @@ void test_2()
     
     sgraph_destroy(g);
 }
-
 
 int main(int argc, char *argv[])
 {
