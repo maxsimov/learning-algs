@@ -35,7 +35,8 @@ APPS=test_deque \
 	 task-graph-simple-bfs \
 	 task-graph-simple-dfs \
 	 task-graph-cycle \
-	 task-graph-union-find
+	 task-graph-union-find \
+	 task-graph-mst-kruskal
 
 CC=gcc
 CFLAGS=-Wall -Werror -std=c99 -D_XOPEN_SOURCE_EXTENDED -D_XOPEN_SOURCE=500 \
