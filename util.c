@@ -20,6 +20,17 @@ void *xmalloc(size_t size)
     return ptr;
 }
 
+void *xrealloc(void *ptr, size_t size)
+{
+    void *ret = realloc(ptr, size);
+    
+    if (!ret)
+        die("out of memory");
+        
+    return ret;
+}
+
+
 void die(const char *msg)
 {
     printf("Fatal error: %s\n", msg);
