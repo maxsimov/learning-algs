@@ -37,13 +37,14 @@ APPS=test_deque \
 	 task-graph-cycle \
 	 task-graph-union-find \
 	 task-graph-mst-kruskal \
-	 task-graph-dijkstra
+	 task-graph-dijkstra \
+	 task-graph-a-star
 
 CC=gcc
 CFLAGS=-Wall -Werror -std=c99 -D_XOPEN_SOURCE_EXTENDED -D_XOPEN_SOURCE=500 \
 	   -Wno-pointer-to-int-cast \
 	   -Wno-int-to-pointer-cast
-LDFLAGS=
+LDFLAGS=-lm
 OBJDIR=obj
 OBJECTS=$(patsubst %.c, $(OBJDIR)/%.o, $(SOURCES))
 EXECUTABLES=$(patsubst %, $(OBJDIR)/%, $(APPS))
@@ -61,4 +62,4 @@ $(OBJDIR)/%.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 $(OBJDIR)/%: $(OBJDIR)/%.o $(OBJECTS)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
+	$(CC) $(CFLAGS)  -o $@ $^ $(LDFLAGS)

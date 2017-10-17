@@ -5,13 +5,20 @@
 #include "stack.h"
 #include "util.h"
 
+struct stack
+{
+    int capacity;
+    int position;
+    intptr_t *data;
+};
+
 struct stack *stack_create(int capacity)
 {
     struct stack *stack = xmalloc(sizeof *stack);
     
     stack->capacity = capacity;
     stack->position = 0;
-    stack->data = xmalloc(sizeof(stack->data[0])*capacity); 
+    stack->data = xmalloc(sizeof(intptr_t[capacity])); 
     
     return stack;
 }
@@ -22,13 +29,17 @@ void stack_destroy(struct stack *stack)
     free(stack);
 }
 
+int stack_len(struct stack *stack)
+{
+    return stack->position;
+}
+
 void stack_push(struct stack *stack, intptr_t value)
 {
     if (stack->position >= stack->capacity)
     {
         stack->capacity = stack->capacity*2;
-        stack->data = realloc(stack->data, sizeof(stack->data[0])*stack->capacity);
-        assert(stack->data);
+        stack->data = xrealloc(stack->data, sizeof(intptr_t[stack->capacity]));
     }
     
     stack->data[stack->position++] = value;
