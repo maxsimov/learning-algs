@@ -60,8 +60,22 @@ bool stack_pop(struct stack *stack, intptr_t *value)
     return true;
 }
 
+bool stack_peek(struct stack *stack, intptr_t *value)
+{
+    if (stack->position == 0)
+        return false;
+
+    *value = stack->data[stack->position-1];
+
+    return true;
+}
+
 intptr_t stack_top(struct stack *stack)
 {
     return stack->data[stack->position-1];
 }
 
+int stack_capacity(struct stack *stack)
+{
+    return stack->capacity;
+}

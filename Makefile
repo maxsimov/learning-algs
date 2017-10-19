@@ -11,7 +11,8 @@ SOURCES=util.c \
 		queue.c \
 		darray.c \
 		graph.c \
-		heap.c
+		heap.c \
+		avl-tree.c
 
 APPS=test_deque \
 	 test_sort \
@@ -21,6 +22,7 @@ APPS=test_deque \
 	 test_graph \
 	 test_queue \
 	 test_heap \
+	 test_avl_tree \
 	 task-merge-k-sorted-lists \
 	 task-find-min-depth \
 	 task-max-path-sum-bin-tree \
