@@ -12,7 +12,8 @@ SOURCES=util.c \
 		darray.c \
 		graph.c \
 		heap.c \
-		avl-tree.c
+		avl-tree.c \
+		rb-tree.c
 
 APPS=test_deque \
 	 test_sort \

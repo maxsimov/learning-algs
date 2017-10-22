@@ -30,6 +30,10 @@ void *xrealloc(void *ptr, size_t size)
     return ret;
 }
 
+void xfree(void *ptr)
+{
+    free(ptr);
+}
 
 void die(const char *msg)
 {

@@ -14,6 +14,7 @@ inline void swap_detail(void* p1, void* p2, void* tmp, size_t sz)
 
 void *xmalloc(size_t size);
 void *xrealloc(void *ptr, size_t size);
+void xfree(void *ptr);
 void die(const char *msg);
 
 #define SWAP(a, b) \
