@@ -13,7 +13,8 @@ SOURCES=util.c \
 		graph.c \
 		heap.c \
 		avl-tree.c \
-		rb-tree.c
+		rb-tree.c \
+    longest-palindromic-substring.c
 
 APPS=test_deque \
 	 test_sort \
@@ -41,7 +42,8 @@ APPS=test_deque \
 	 task-graph-union-find \
 	 task-graph-mst-kruskal \
 	 task-graph-dijkstra \
-	 task-graph-a-star
+	 task-graph-a-star \
+   problem-longest-palindromic-substring
 
 CC=gcc
 CFLAGS=-Wall -Werror -std=c99 -D_XOPEN_SOURCE_EXTENDED -D_XOPEN_SOURCE=500 \
