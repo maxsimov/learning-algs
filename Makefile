@@ -15,9 +15,12 @@ SOURCES=util.c \
 		avl-tree.c \
 		rb-tree.c \
     longest-palindromic-substring.c \
-    heap_inplace.c
+    heap_inplace.c \
+    guess-word-master.cpp \
+    guess-word-solution.cpp \
+    guess-word-rand.cpp
 
-APPS=test_deque \
+C_APPS=test_deque \
 	 test_sort \
 	 test_bin_tree \
 	 test_hash \
@@ -47,20 +50,30 @@ APPS=test_deque \
    problem-longest-palindromic-substring \
    test_heap_inplace
 
+CXX_APPS= \
+   test-guess-word
+
+CXX=g++
+CXXFLAGS=-Wall -Werror 
+
 CC=gcc
 CFLAGS=-Wall -Werror -std=c99 -D_XOPEN_SOURCE_EXTENDED -D_XOPEN_SOURCE=500 \
 	   -Wno-pointer-to-int-cast \
 	   -Wno-int-to-pointer-cast
 LDFLAGS=-lm
 OBJDIR=obj
-OBJECTS=$(patsubst %.c, $(OBJDIR)/%.o, $(SOURCES))
-EXECUTABLES=$(patsubst %, $(OBJDIR)/%, $(APPS))
 
-.PRECIOUS: $(OBJDIR)/%.o
+C_OBJECTS=$(patsubst %.c, $(OBJDIR)/%.o, $(filter %.c,$(SOURCES)))
+CXX_OBJECTS=$(patsubst %.cpp, $(OBJDIR)/%.o, $(filter %.cpp,$(SOURCES)))
+
+C_EXECUTABLES=$(patsubst %, $(OBJDIR)/%, $(C_APPS))
+CXX_EXECUTABLES=$(patsubst %, $(OBJDIR)/%, $(CXX_APPS))
+
+.PRECIOUS: $(OBJDIR)/%.o 
 
 $(shell mkdir -p $(OBJDIR))
 
-all: $(EXECUTABLES)
+all: $(C_EXECUTABLES) $(CXX_EXECUTABLES)
 
 clean:
 	rm -fr $(OBJDIR)
@@ -68,5 +81,8 @@ clean:
 $(OBJDIR)/%.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-$(OBJDIR)/%: $(OBJDIR)/%.o $(OBJECTS)
-	$(CC) $(CFLAGS)  -o $@ $^ $(LDFLAGS)
+$(OBJDIR)/%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+$(OBJDIR)/%: $(OBJDIR)/%.o $(C_OBJECTS) $(CXX_OBJECTS)
+	$(CXX) $(LDFLAGS) -o $@ $^ 
