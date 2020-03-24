@@ -29,8 +29,8 @@ class Master
   string secret;
   Result res;
   mt19937 gen;
-  int wordSize = 6;
 public:
+  static const int wordSize = 6;
   Master();
 
   void init(int words);

@@ -18,7 +18,8 @@ SOURCES=util.c \
     heap_inplace.c \
     guess-word-master.cpp \
     guess-word-solution.cpp \
-    guess-word-rand.cpp
+    guess-word-rand.cpp \
+    guess-word-minmax.cpp
 
 C_APPS=test_deque \
 	 test_sort \
