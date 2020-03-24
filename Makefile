@@ -53,14 +53,16 @@ C_APPS=test_deque \
 CXX_APPS= \
    test-guess-word
 
+FMT=thirdparty/fmt-6.1.2
+
 CXX=g++
-CXXFLAGS=-Wall -Werror 
+CXXFLAGS=-Wall -Werror -I$(FMT)/include
 
 CC=gcc
 CFLAGS=-Wall -Werror -std=c99 -D_XOPEN_SOURCE_EXTENDED -D_XOPEN_SOURCE=500 \
 	   -Wno-pointer-to-int-cast \
 	   -Wno-int-to-pointer-cast
-LDFLAGS=-lm
+LDFLAGS=-L$(FMT) -lm -lfmt -v
 OBJDIR=obj
 
 C_OBJECTS=$(patsubst %.c, $(OBJDIR)/%.o, $(filter %.c,$(SOURCES)))
@@ -85,4 +87,7 @@ $(OBJDIR)/%.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 $(OBJDIR)/%: $(OBJDIR)/%.o $(C_OBJECTS) $(CXX_OBJECTS)
-	$(CXX) $(LDFLAGS) -o $@ $^ 
+	$(CXX)  -o $@ $^ $(LDFLAGS)
+
+$(FMT)/libfmt.a:
+	(cd $(FMT) && cmake . && make fmt)

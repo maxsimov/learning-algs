@@ -42,6 +42,11 @@ public:
   {
     return res;
   }
+
+  vector<string> &getWordList() 
+  {
+    return wordList;
+  }
 };
 
 };

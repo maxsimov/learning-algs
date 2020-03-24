@@ -1,35 +1,120 @@
+#include <memory>
+#include <iostream>
 #include "guess-word-master.h"
 #include "guess-word-solution.h"
+#include <fmt/format.h>
 
 using namespace GuessWord;
+using namespace fmt;
 
 const int maxTestCases = 100;
+const int maxWords = 100;
 
 struct TestSuite
 {
+  struct Test
+  {
+    Test(const string &n, unique_ptr<Solution> s)
+      : name(n)
+      , sol(move(s))
+    {
+    }
+    
+    string name;
+    unique_ptr<Solution> sol;
+
+    unsigned successful;
+    unsigned failed;
+
+    unsigned minAttempts;
+    unsigned maxAttempts;
+    unsigned avgAttempts;
+
+
+
+  };
+
   TestSuite(const SolutionList &solutions)
   {
     for (auto c: solutions)
     {
-      masters.push_back(make_pair(c.first, c.second()));
+      unique_ptr<Solution> sol(c.second());
+      sols.emplace_back(new Test(c.first, move(sol) ) );
     }
   }
 
   ~TestSuite()
   {
-    for (auto c: masters)
+  }
+
+  void run()
+  {
+    master.init(maxWords);
+    for (auto &s: sols)
     {
-      delete c.second;
+      master.start();
+      s->sol->findSecretWord(master.getWordList(), master);
+      master.end();
+
+      const auto &r = master.result();
+
+      if (r.found) s->successful++;
+       else s->failed++;
+
+      if (s->failed)
+        continue;
+
+      if (firstTime)
+      {
+        s->minAttempts = r.attemps.size();
+        s->maxAttempts = r.attemps.size();
+        s->avgAttempts = r.attemps.size();
+      } else {
+        if (r.attemps.size() < s->minAttempts)
+          s->minAttempts = r.attemps.size();
+        if (r.attemps.size() > s->maxAttempts)
+          s->maxAttempts = r.attemps.size();
+        s->avgAttempts += r.attemps.size();
+      }
+    }
+
+    firstTime = false;
+  }
+
+  void report()
+  {
+    for (auto &s: sols)
+    {
+      cout << format("Solution: {}", s->name);
+
+      if (s->failed)
+      {
+        cout << format(" failed\n");
+        continue;
+      }
+
+      cout << format(" Avg attempts: {} Min attempts: {} Max attempts: {}\n", 
+        double(s->avgAttempts) / double(s->successful),
+        s->minAttempts,
+        s->maxAttempts
+        );
     }
   }
 
 private:
-  list<pair<string,Solution *>> masters;
+  list<unique_ptr<Test>> sols;
+  Master master;
+  bool firstTime = true;
 };
 
 int main()
 {
   TestSuite tests(solutionLists());
+
+  for (int i=0; i<maxTestCases; i++)
+    tests.run();
+
+  tests.report();
 
   return 0;
 }
