@@ -86,7 +86,7 @@ $(OBJDIR)/%.o: %.c
 $(OBJDIR)/%.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
-$(OBJDIR)/%: $(OBJDIR)/%.o $(C_OBJECTS) $(CXX_OBJECTS)
+$(OBJDIR)/%: $(OBJDIR)/%.o $(C_OBJECTS) $(CXX_OBJECTS) $(FMT)/libfmt.a
 	$(CXX)  -o $@ $^ $(LDFLAGS)
 
 $(FMT)/libfmt.a:

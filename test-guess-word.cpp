@@ -30,8 +30,7 @@ struct TestSuite
     unsigned maxAttempts;
     unsigned avgAttempts;
 
-
-
+    Clock::duration duration;
   };
 
   TestSuite(const SolutionList &solutions)
@@ -69,12 +68,14 @@ struct TestSuite
         s->minAttempts = r.attemps.size();
         s->maxAttempts = r.attemps.size();
         s->avgAttempts = r.attemps.size();
+        s->duration = r.timeEnd-r.timeStart;
       } else {
         if (r.attemps.size() < s->minAttempts)
           s->minAttempts = r.attemps.size();
         if (r.attemps.size() > s->maxAttempts)
           s->maxAttempts = r.attemps.size();
         s->avgAttempts += r.attemps.size();
+        s->duration += r.timeEnd-r.timeStart;
       }
     }
 
@@ -93,10 +94,11 @@ struct TestSuite
         continue;
       }
 
-      cout << format(" Avg attempts: {} Min attempts: {} Max attempts: {}\n", 
+      cout << format(" Avg attempts: {} Min attempts: {} Max attempts: {} Duration: {}\n", 
         double(s->avgAttempts) / double(s->successful),
         s->minAttempts,
-        s->maxAttempts
+        s->maxAttempts,
+        chrono::duration_cast<std::chrono::microseconds> (s->duration).count()
         );
     }
   }

@@ -24,11 +24,10 @@ void Master::init(int words)
 {
   wordList.clear();
 
-  wordList.resize(words);
+  wordList.resize(words, string(wordSize, 'a'));
   for (int i=0; i<words; i++)
     for (int j=0; j<wordSize; ++j)
       wordList[i][j] = 'a' + (gen() % 26);
-
   secret = wordList[gen() % wordList.size()];
 }
 
