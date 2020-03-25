@@ -19,7 +19,8 @@ SOURCES=util.c \
     guess-word-master.cpp \
     guess-word-solution.cpp \
     guess-word-rand.cpp \
-    guess-word-minmax.cpp
+    guess-word-minmax.cpp \
+    guess-word-freq.cpp
 
 C_APPS=test_deque \
 	 test_sort \
@@ -63,7 +64,7 @@ CC=gcc
 CFLAGS=-Wall -Werror -std=c99 -D_XOPEN_SOURCE_EXTENDED -D_XOPEN_SOURCE=500 \
 	   -Wno-pointer-to-int-cast \
 	   -Wno-int-to-pointer-cast
-LDFLAGS=-L$(FMT) -lm -lfmt -v
+LDFLAGS=-L$(FMT) -lm -lfmt
 OBJDIR=obj
 
 C_OBJECTS=$(patsubst %.c, $(OBJDIR)/%.o, $(filter %.c,$(SOURCES)))
