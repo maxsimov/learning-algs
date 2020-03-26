@@ -16,6 +16,9 @@ public:
     const int WLen = 6;
 
     array<array<int, MChars>, WLen> freq;
+    for (int i=0; i<WLen; i++)
+        for (int j=0; j<MChars; j++)
+            freq[i][j] = 0;
 
     for (const auto &w: wordlist)
     {
@@ -26,17 +29,21 @@ public:
     vector<int> notUsed(wordlist.size());
     iota(notUsed.begin(), notUsed.end(), 0);
 
-    const auto &getScore = [&](int a) -> int64_t
-    {
-      int64_t score = 1;
-      for (int i=0; i<WLen; i++)
-        score *= freq[i][wordlist[a][i]-'a'];
-      return score;
-    };
+    vector<int64_t> scores(wordlist.size());
 
     while (!notUsed.empty())
     {
-      int next = *max_element(notUsed.begin(), notUsed.end(), [&](int a, int b) -> bool { return getScore(a) < getScore(b); } );
+      for (auto a : notUsed)
+      {
+        int64_t score = 1;
+        const string &w = wordlist[a];
+        for (int i=0; i<WLen; i++)
+          score *= freq[i][w[i]-'a'];
+        scores[a] = score;
+      }
+
+      int next = *max_element(notUsed.begin(), notUsed.end(), 
+                [&](int a, int b)  { return scores[a] < scores[b]; } );
       int distance = master.guess(wordlist[next]);
 
       if (distance == WLen)
@@ -48,8 +55,9 @@ public:
 
         if (needRemove)
         {
+          const string &w = wordlist[a];
           for (int i=0; i<WLen; i++)
-            --freq[i][wordlist[a][i]-'a'];
+            --freq[i][w[i]-'a'];
         }
 
         return needRemove;

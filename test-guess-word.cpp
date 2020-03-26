@@ -7,7 +7,7 @@
 using namespace GuessWord;
 using namespace fmt;
 
-const int maxTestCases = 100;
+const int maxTestCases = 1000;
 const int maxWords = 100;
 
 struct TestSuite
